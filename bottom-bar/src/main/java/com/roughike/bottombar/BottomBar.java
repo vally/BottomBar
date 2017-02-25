@@ -64,6 +64,12 @@ public class BottomBar extends LinearLayout implements View.OnClickListener, Vie
     private int screenWidth;
     private int tenDp;
     private int maxFixedItemWidth;
+    private int topPadding;
+    private int leftPadding;
+    private int rightPadding;
+    private int bottomPadding;
+    private int activeTabTextSize;
+    private int inactiveTabTextSize;
 
     // XML Attributes
     private int tabXmlResource;
@@ -77,6 +83,7 @@ public class BottomBar extends LinearLayout implements View.OnClickListener, Vie
     private int titleTextAppearance;
     private Typeface titleTypeFace;
     private boolean showShadow;
+    private boolean isAnimated;
 
     private View backgroundOverlay;
     private ViewGroup outerContainer;
@@ -609,6 +616,17 @@ public class BottomBar extends LinearLayout implements View.OnClickListener, Vie
         });
     }
 
+    public void setPaddingActiveTab(int left, int top, int right, int bottom) {
+        leftPadding = MiscUtils.dpToPixel(getContext(), left);
+        topPadding = MiscUtils.dpToPixel(getContext(), top);
+        rightPadding = MiscUtils.dpToPixel(getContext(), right);
+        bottomPadding = MiscUtils.dpToPixel(getContext(), bottom);
+    }
+
+    public void setIsAnimated(boolean isAnimated) {
+        this.isAnimated = isAnimated;
+    }
+
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
@@ -765,8 +783,13 @@ public class BottomBar extends LinearLayout implements View.OnClickListener, Vie
         BottomBarTab oldTab = getCurrentTab();
         BottomBarTab newTab = (BottomBarTab) v;
 
-        oldTab.deselect(true);
-        newTab.select(true);
+        if (topPadding > 0) {
+            oldTab.deselect(isAnimated, topPadding);
+            newTab.select(isAnimated, topPadding);
+        } else {
+            oldTab.deselect(isAnimated);
+            newTab.select(isAnimated);
+        }
 
         shiftingMagic(oldTab, newTab, true);
         handleBackgroundColorChange(newTab, true);

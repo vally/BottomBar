@@ -371,6 +371,26 @@ public class BottomBarTab extends LinearLayout {
         }
     }
 
+    void select(boolean animate, int topPadding) {
+        isActive = true;
+
+        if (animate) {
+            setTopPaddingAnimated(iconView.getPaddingTop(), topPadding);
+            animateIcon(activeAlpha);
+            animateTitle(ACTIVE_TITLE_SCALE, activeAlpha);
+            animateColors(inActiveColor, activeColor);
+        } else {
+            setTitleScale(ACTIVE_TITLE_SCALE);
+            setTopPadding(topPadding);
+            setColors(activeColor);
+            setAlphas(activeAlpha);
+        }
+
+        if (badge != null) {
+            badge.hide();
+        }
+    }
+
     void deselect(boolean animate) {
         isActive = false;
 
@@ -387,6 +407,29 @@ public class BottomBarTab extends LinearLayout {
         } else {
             setTitleScale(scale);
             setTopPadding(iconPaddingTop);
+            setColors(inActiveColor);
+            setAlphas(inActiveAlpha);
+        }
+
+        if (!isShifting && badge != null) {
+            badge.show();
+        }
+    }
+
+    void deselect(boolean animate, int topPadding) {
+        isActive = false;
+
+        boolean isShifting = type == Type.SHIFTING;
+
+        float scale = isShifting ? 0 : INACTIVE_FIXED_TITLE_SCALE;
+
+        if (animate) {
+            setTopPaddingAnimated(iconView.getPaddingTop(), topPadding);
+            animateTitle(scale, inActiveAlpha);
+            animateIcon(inActiveAlpha);
+            animateColors(activeColor, inActiveColor);
+        } else {
+            setTopPadding(topPadding);
             setColors(inActiveColor);
             setAlphas(inActiveAlpha);
         }
